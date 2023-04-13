@@ -163,37 +163,42 @@ namespace MVCWebApplication.Controllers
             }
         }
 
-        void DeleteStudent(int id, StudentModel student)
-        {
-            //List<StudentModel> StudentList = new List<StudentModel>();
-            SqlConnection.Open();
-            SqlCommand cmd = new SqlCommand("DELETE_STUDENT", SqlConnection);
-            cmd.CommandType = System.Data.CommandType.StoredProcedure;
+        //void DeleteStudent(int id)
+        //{
+        //    SqlConnection.Open();
+        //    SqlCommand cmd = new SqlCommand("DELETE_STUDENT", SqlConnection);
+        //    cmd.CommandType = System.Data.CommandType.StoredProcedure;
 
-            cmd.Parameters.AddWithValue("@studentName", student.StudentName);
-            cmd.Parameters.AddWithValue("@course", student.CourseName);
-            cmd.Parameters.AddWithValue("@regNum", student.RegisterNumber);
-            cmd.Parameters.AddWithValue("@marks", student.Marks);
-            cmd.Parameters.AddWithValue("@studentId", id);
+        //    cmd.Parameters.AddWithValue("@studentId", id);
 
-
-            cmd.ExecuteNonQuery();
-            SqlConnection.Close();
-        }
-
+        //    cmd.ExecuteNonQuery();
+        //    SqlConnection.Close();
+        //    //return student;
+        //}
         // GET: StudentController/Delete/5
         public ActionResult Delete(int id)
         {
-            return View();
+            return View(GetStudent(id));
         }
-
         // POST: StudentController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult Delete(int id, StudentModel student)
         {
             try
             {
+                SqlConnection.Open();
+                //SqlCommand cmd = new SqlCommand("DELETE_STUDENT", SqlConnection);
+                //cmd.CommandType = System.Data.CommandType.StoredProcedure;
+
+                SqlCommand cmd = new SqlCommand("DELETE FROM TStudents1 WHERE StuId = @studentId", SqlConnection);
+
+                cmd.Parameters.AddWithValue("@studentId", id);
+
+                cmd.ExecuteNonQuery();
+                SqlConnection.Close();
+
+                //DeleteStudent(id);
                 return RedirectToAction(nameof(Index));
             }
             catch
