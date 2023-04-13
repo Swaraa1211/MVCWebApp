@@ -15,7 +15,33 @@ namespace MVCWebApplication.Controllers
             SqlConnection = new SqlConnection(configuration.GetConnectionString("TryDB"));
         }
 
-        
+        StudentModel GetStudent(int id)
+        {
+            //List<StudentModel> StudentList = new List<StudentModel>();
+            SqlConnection.Open();
+            SqlCommand cmd = new SqlCommand("GET_STUDENT", SqlConnection);
+            cmd.CommandType = System.Data.CommandType.StoredProcedure;
+
+            cmd.Parameters.AddWithValue("@studentId", id);
+
+            SqlDataReader reader = cmd.ExecuteReader();
+            StudentModel student = new StudentModel();
+
+            while (reader.Read())
+            {
+                student.StudentId = (int)reader["StuId"];
+                student.StudentName = (string)reader["StuName"];
+                student.CourseName = (string)reader["CourseName"];
+                student.RegisterNumber = (int)reader["RegisterNum"];
+                student.Marks = (int)reader["Marks"];
+                //StudentList.Add(student);
+            }
+
+            reader.Close();
+            SqlConnection.Close();
+
+            return student;
+        }
 
         public List<StudentModel> GetStudentsList()
         {
@@ -52,7 +78,7 @@ namespace MVCWebApplication.Controllers
         // GET: StudentController/Details/5
         public ActionResult Details(int id)
         {
-            return View();
+            return View(GetStudent(id));
         }
 
         // GET: StudentController/Create
@@ -94,33 +120,7 @@ namespace MVCWebApplication.Controllers
             }
         }
 
-        StudentModel GetStudent(int id)
-        {
-            //List<StudentModel> StudentList = new List<StudentModel>();
-            SqlConnection.Open();
-            SqlCommand cmd = new SqlCommand("GET_STUDENTS", SqlConnection);
-            cmd.CommandType = System.Data.CommandType.StoredProcedure;
-
-            cmd.Parameters.AddWithValue("@StudentId", id);
-
-            SqlDataReader reader = cmd.ExecuteReader();
-            StudentModel student = new StudentModel();
-
-            while (reader.Read())
-            {
-                student.StudentId = (int)reader["StuId"];
-                student.StudentName = (string)reader["StuName"];
-                student.CourseName = (string)reader["CourseName"];
-                student.RegisterNumber = (int)reader["RegisterNum"];
-                student.Marks = (int)reader["Marks"];
-                //StudentList.Add(student);
-            }
-
-            reader.Close();
-            SqlConnection.Close();
-
-            return student;
-        }
+        
         // GET: StudentController/Edit/5
         public ActionResult Edit(int id)
         {
